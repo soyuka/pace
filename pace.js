@@ -44,6 +44,8 @@ function Pace(options) {
   // Whether to show current burden %.
   this.show_burden = options.showBurden || false;
 
+  this.custom = options.custom || null
+
   // Internal time tracking properties.
   this.started = false;
   this.size = 50;
@@ -172,8 +174,15 @@ Pace.prototype.outputStats = function outputStats() {
   this.perc = padLeft(this.perc.toFixed(2), 2);
   this.charm.write('            ').display('bright').write(this.perc + '%').display('reset');
   this.total_len = formatNumber(this.total).length;
-  this.charm.write('   ').display('bright').write(padLeft(formatNumber(this.current), this.total_len)).display('reset');
+  this.charm.write('   ').display('bright').write(padLeft(formatNumber(this.current), this.total_len)).display('reset')
+
   this.charm.write('/' + formatNumber(this.total));
+
+  if(typeof this.custom == 'function') {
+    var str = this.custom(this.charm)
+    if(str && str.length)
+      this.charm.write('     ').write(str).display('reset')
+  }
 
   // Output burden.
   if (this.show_burden) {
